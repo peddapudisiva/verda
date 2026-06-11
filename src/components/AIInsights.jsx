@@ -40,9 +40,9 @@ export default function AIInsights({ activities, completedIds, netTotal, goal })
   async function fetchTips() {
     setLoading(true)
     setError(null)
-    const apiKey = import.meta.env.VITE_ANTHROPIC_API_KEY
+    const apiKey = import.meta.env.VITE_GEMINI_API_KEY
     if (!apiKey) {
-      setError('Add VITE_ANTHROPIC_API_KEY to your .env file to unlock AI tips.')
+      setError('Add VITE_GEMINI_API_KEY to your .env file to unlock AI tips. Get a free key at aistudio.google.com/apikey')
       setLoading(false)
       return
     }
@@ -59,20 +59,17 @@ Give exactly 3 personalised tips to help them reduce their footprint. Format eac
 Be warm, specific, and use their actual data. Start directly with tip 1.`
 
     try {
-      const res = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: {
-          'x-api-key': apiKey,
-          'anthropic-version': '2023-06-01',
-          'content-type': 'application/json',
-          'anthropic-dangerous-direct-browser-access': 'true',
-        },
-        body: JSON.stringify({
-          model: 'claude-sonnet-4-20250514',
-          max_tokens: 1000,
-          messages: [{ role: 'user', content: prompt }],
-        }),
-      })
+      const res = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
+        {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }],
+            generationConfig: { maxOutputTokens: 1000 },
+          }),
+        }
+      )
 
       if (!res.ok) {
         const err = await res.json().catch(() => ({}))
@@ -80,7 +77,7 @@ Be warm, specific, and use their actual data. Start directly with tip 1.`
       }
 
       const data = await res.json()
-      const text = data.content?.[0]?.text || ''
+      const text = data.candidates?.[0]?.content?.parts?.[0]?.text || ''
       setTips(parseTips(text))
       setFetched(true)
     } catch (e) {
