@@ -40,9 +40,9 @@ export default function AIInsights({ activities, completedIds, netTotal, goal })
   async function fetchTips() {
     setLoading(true)
     setError(null)
-    const apiKey = import.meta.env.VITE_GEMINI_API_KEY
+    const apiKey = import.meta.env.VITE_GROQ_API_KEY
     if (!apiKey) {
-      setError('Add VITE_GEMINI_API_KEY to your .env file to unlock AI tips. Get a free key at aistudio.google.com/apikey')
+      setError('Add VITE_GROQ_API_KEY to your .env file. Get a free key at console.groq.com (no credit card needed).')
       setLoading(false)
       return
     }
@@ -59,17 +59,18 @@ Give exactly 3 personalised tips to help them reduce their footprint. Format eac
 Be warm, specific, and use their actual data. Start directly with tip 1.`
 
     try {
-      const res = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`,
-        {
-          method: 'POST',
-          headers: { 'content-type': 'application/json' },
-          body: JSON.stringify({
-            contents: [{ parts: [{ text: prompt }] }],
-            generationConfig: { maxOutputTokens: 1000 },
-          }),
-        }
-      )
+      const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'llama3-8b-8192',
+          messages: [{ role: 'user', content: prompt }],
+          max_tokens: 1000,
+        }),
+      })
 
       if (!res.ok) {
         const err = await res.json().catch(() => ({}))
@@ -77,7 +78,7 @@ Be warm, specific, and use their actual data. Start directly with tip 1.`
       }
 
       const data = await res.json()
-      const text = data.candidates?.[0]?.content?.parts?.[0]?.text || ''
+      const text = data.choices?.[0]?.message?.content || ''
       setTips(parseTips(text))
       setFetched(true)
     } catch (e) {
