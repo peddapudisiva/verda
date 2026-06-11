@@ -282,8 +282,13 @@ export default function App() {
         )}
       </AnimatePresence>
 
+      {/* Announce page changes to screen readers */}
+      <div aria-live="polite" aria-atomic="true" className="sr-only">
+        {NAV.find(n => n.id === page)?.label}
+      </div>
+
       {/* Page content */}
-      <main className="page-content">
+      <main className="page-content" id="main-content" aria-label="Page content">
         <AnimatePresence mode="wait">
           <motion.div
             key={page}
