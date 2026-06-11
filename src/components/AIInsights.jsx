@@ -60,7 +60,7 @@ Be warm, specific, and use their actual data. Start directly with tip 1.`
 
     try {
       const res = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`,
         {
           method: 'POST',
           headers: { 'content-type': 'application/json' },
