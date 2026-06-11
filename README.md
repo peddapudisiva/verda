@@ -6,7 +6,7 @@
 [![Built with React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=white)](https://react.dev)
 [![Powered by Claude](https://img.shields.io/badge/AI-Claude%20claude-sonnet-4-20250514-orange?logo=anthropic&logoColor=white)](https://anthropic.com)
 [![PWA Ready](https://img.shields.io/badge/PWA-Ready-5A0FC8?logo=pwa&logoColor=white)](https://web.dev/progressive-web-apps/)
-[![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-000?logo=vercel&logoColor=white)](https://vercel.com)
+[![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-000?logo=vercel&logoColor=white)](https://verda-rho.vercel.app)
 [![Vite](https://img.shields.io/badge/Vite-8-646CFF?logo=vite&logoColor=white)](https://vitejs.dev)
 
 A hackathon-ready React web app that treats carbon emissions like a weekly budget you spend down.
