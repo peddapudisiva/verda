@@ -40,12 +40,6 @@ export default function AIInsights({ activities, completedIds, netTotal, goal })
   async function fetchTips() {
     setLoading(true)
     setError(null)
-    const apiKey = import.meta.env.VITE_GROQ_API_KEY
-    if (!apiKey) {
-      setError('Add VITE_GROQ_API_KEY to your .env file. Get a free key at console.groq.com (no credit card needed).')
-      setLoading(false)
-      return
-    }
 
     const prompt = `You are a warm, encouraging Verda coach helping someone track their carbon footprint.
 The user's carbon data this week:
@@ -59,27 +53,19 @@ Give exactly 3 personalised tips to help them reduce their footprint. Format eac
 Be warm, specific, and use their actual data. Start directly with tip 1.`
 
     try {
-      const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      const res = await fetch('/api/coach', {
         method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${apiKey}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: 'llama-3.1-8b-instant',
-          messages: [{ role: 'user', content: prompt }],
-          max_tokens: 1000,
-        }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt }),
       })
 
       if (!res.ok) {
         const err = await res.json().catch(() => ({}))
-        throw new Error(err.error?.message || `API error ${res.status}`)
+        throw new Error(err.error || `API error ${res.status}`)
       }
 
       const data = await res.json()
-      const text = data.choices?.[0]?.message?.content || ''
-      setTips(parseTips(text))
+      setTips(parseTips(data.text || ''))
       setFetched(true)
     } catch (e) {
       setError(e.message || 'Something went wrong. Try again.')
